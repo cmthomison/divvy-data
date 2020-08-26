@@ -4,12 +4,15 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+ipykernel = "*"
 
 [packages]
 pandas = "*"
 numpy = "*"
 matplotlib = "*"
 seaborn = "*"
+ipykernel = "*"
+jupyter = "*"
 
 [requires]
 python_version = "3.7"
