@@ -12,10 +12,10 @@ from sodapy import Socrata
 
 # None indicates no credentials required for public datasets.
 client = Socrata("data.cityofchicago.org", None)
+client.timeout = 60
 
-# First 2000 results, returned as JSON from API / converted to Python list of
-# dictionaries by sodapy.
-results = client.get("fg6s-gzvg", limit=100)
+# Get bikeshare records with sodapy.
+results = client.get("fg6s-gzvg", limit=1000)
 
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)

@@ -14,3 +14,14 @@
 - Optimized rebalancing system
 - New site selection
 - Revenue optimization
+
+# Clustering brainstorming
+- Commuters (subscriber)
+    - First mile (to station within 0.1 miles of train station) (morning)
+    - Last mile (from station within 0.1 miles of train station) (morning)
+    - All the way
+
+- Feature engineering/additional data
+    - Proximity of Divvy station to 'l' station
+    - Direction of travel in relation to loop
+    - Proximity to recreational trails (606/Lakefront Path)
