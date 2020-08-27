@@ -4,3 +4,13 @@
 - Explore rebalancing
 - Feature engineering including proximity to transit and CTA ride data
 - https://dev.socrata.com/foundry/data.cityofchicago.org/fg6s-gzvg
+
+# Analysis chunks
+- What Divvy stations are similar to each other/behave similarly? (clustering)
+-  How can we expect a new station to behave? (classification)
+- What makes a Divvy station? (regression/random forest)
+- How many rides will be taken from a particular station? (time series)
+- What is the true rider demand at stations (even when there are no bikes left)?
+- Optimized rebalancing system
+- New site selection
+- Revenue optimization

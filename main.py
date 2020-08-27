@@ -15,7 +15,7 @@ client = Socrata("data.cityofchicago.org", None)
 
 # First 2000 results, returned as JSON from API / converted to Python list of
 # dictionaries by sodapy.
-results = client.get("fg6s-gzvg", limit=2000)
+results = client.get("fg6s-gzvg", limit=100)
 
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)
