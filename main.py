@@ -7,6 +7,7 @@ Divvy Data Analysis
 
 import pandas as pd
 import numpy as np
+import geopandas as gpd
 
 from sodapy import Socrata
 
@@ -19,3 +20,6 @@ results = client.get("fg6s-gzvg", limit=1000)
 
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)
+
+# Projection for Chicago
+#.to_crs(epsg=3435)

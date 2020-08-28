@@ -25,3 +25,6 @@
     - Proximity of Divvy station to 'l' station
     - Direction of travel in relation to loop
     - Proximity to recreational trails (606/Lakefront Path)
+
+# Spatial calculations
+- https://geopandas.org/data_structures.html
