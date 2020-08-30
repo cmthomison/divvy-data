@@ -5,6 +5,13 @@
 - Feature engineering including proximity to transit and CTA ride data
 - https://dev.socrata.com/foundry/data.cityofchicago.org/fg6s-gzvg
 
+# Project list
+- #1 Spatial Data Exploration
+    - Learn how to calculate distance between two lat/long points
+    - Learn how to draw buffers with geopandas/shapely
+    - Count points within buffers
+    - Visualize resulting data
+    
 # Analysis chunks
 - What Divvy stations are similar to each other/behave similarly? (clustering)
 -  How can we expect a new station to behave? (classification)
@@ -28,3 +35,9 @@
 
 # Spatial calculations
 - https://geopandas.org/data_structures.html
+
+# Current steps
+- Calculate straight line distance between to_location and from_location
+    - Using geopandas or shapely?
+- Pull in CTA train and bus station data (with lat/long)
+- Count number of bus/train stops within 
