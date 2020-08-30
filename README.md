@@ -11,7 +11,7 @@
     - Learn how to draw buffers with geopandas/shapely
     - Count points within buffers
     - Visualize resulting data
-    
+    - https://automating-gis-processes.github.io/site/course-info/course-info.html
 # Analysis chunks
 - What Divvy stations are similar to each other/behave similarly? (clustering)
 -  How can we expect a new station to behave? (classification)
@@ -39,5 +39,7 @@
 # Current steps
 - Calculate straight line distance between to_location and from_location
     - Using geopandas or shapely?
+    - Write a function to create a line with to/from with shapely and return line length
+    - https://www.youtube.com/watch?v=FizD8t5_s3M&feature=emb_rel_pause
 - Pull in CTA train and bus station data (with lat/long)
 - Count number of bus/train stops within 
