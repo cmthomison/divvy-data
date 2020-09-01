@@ -7,7 +7,6 @@ verify_ssl = true
 ipykernel = "*"
 
 [packages]
-pandas = "*"
 numpy = "*"
 matplotlib = "*"
 seaborn = "*"
@@ -15,6 +14,7 @@ ipykernel = "*"
 jupyter = "*"
 sodapy = "*"
 geopandas = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.7"
