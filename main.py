@@ -23,18 +23,6 @@ results = client.get("fg6s-gzvg", limit=1000)
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)
 
-# Function to calculate distance between from_location and to_location
-def get_dist(row):
-
-    # Get point tuples.
-    from_loc = Point(float(row['from_latitude']),float(row['from_longitude']))
-    to_loc = Point(float(row['to_latitude']),float(row['to_longitude']))
-
-    # Create line string.
-    st_path = LineString([(from_loc.x,from_loc.y), (to_loc.x,to_loc.y)])
-
-    return st_path.length
-
 # Function using geopy to get distance (geodesic)
 def get_mi(row):
 
@@ -46,7 +34,6 @@ def get_mi(row):
     dist = geodesic(from_loc, to_loc).miles
 
     return dist
-
 
 # Testing
 testing = results_df.head()
