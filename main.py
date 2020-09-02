@@ -23,18 +23,6 @@ results = client.get("fg6s-gzvg", limit=1000)
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)
 
-# Function using geopy to get distance (geodesic)
-def get_mi(row):
-
-    # Get tuples
-    from_loc = (float(row['from_latitude']), float(row['from_longitude']))
-    to_loc = (float(row['to_latitude']), float(row['to_longitude']))
-
-    # Get distance
-    dist = geodesic(from_loc, to_loc).miles
-
-    return dist
-
 # Function to create  lat/long tuples
 def lat_long(lat, lon):
 
@@ -53,7 +41,6 @@ def get_mi(from_loc:tuple, to_loc:tuple) -> float:
 
 # Testing
 testing = results_df.head()
-testing['dist_mi'] = testing.apply(get_mi, axis=1)
 
 testing['from_loc'] = testing.apply(lambda x: lat_long(x['from_latitude'],
                                                        x['from_longitude']),
@@ -63,7 +50,9 @@ testing['to_loc'] = testing.apply(lambda x: lat_long(x['to_latitude'],
                                                      x['to_longitude']),
                                                      axis=1)
 
-testing['from_loc'] = (testing['from_latitude'].astype(float), testing['from_longitude'].astype(float))
+testing['dist_mi'] = testing.apply(lambda x: get_mi(x['from_loc'],
+                                                    x['to_loc']),
+                                                    axis=1)
 
 # Projection for Chicago
 #.to_crs(epsg=3435)

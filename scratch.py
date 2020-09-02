@@ -19,3 +19,15 @@ def get_dist(row):
     st_path = LineString([(from_loc.x,from_loc.y), (to_loc.x,to_loc.y)])
 
     return st_path.length
+
+# Function using geopy to get distance (geodesic)
+def get_mi(row):
+
+    # Get tuples
+    from_loc = (float(row['from_latitude']), float(row['from_longitude']))
+    to_loc = (float(row['to_latitude']), float(row['to_longitude']))
+
+    # Get distance
+    dist = geodesic(from_loc, to_loc).miles
+
+    return dist
