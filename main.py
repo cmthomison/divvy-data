@@ -25,6 +25,11 @@ results = client.get("fg6s-gzvg", limit=1000)
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)
 
+# Get all stations.
+stations = results_df[['from_station_id', 'from_station_name', 'from_latitude',
+                       'from_longitude']].reset_index(drop=True)
+stations.drop_duplicates(inplace=True)
+
 # Data wrangling/preliminary feature engineering.
 # Calculate distance (in miles) between start and end stations.
 results_df['from_loc'] = results_df.apply(lambda x: wr.lat_long(x['from_latitude'],
