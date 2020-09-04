@@ -30,6 +30,9 @@ stations = results_df[['from_station_id', 'from_station_name', 'from_latitude',
                        'from_longitude']].reset_index(drop=True)
 stations.drop_duplicates(inplace=True)
 
+cols = stations.columns.tolist()
+stations.columns = [x.split('_',1)[1] for x in cols]
+
 # Data wrangling/preliminary feature engineering.
 # Calculate distance (in miles) between start and end stations.
 results_df['from_loc'] = results_df.apply(lambda x: wr.lat_long(x['from_latitude'],
@@ -52,6 +55,9 @@ cta_df = pd.DataFrame.from_records(cta)
 cta_df['sloc'] = cta_df.apply(lambda x: wr.lat_long(x['location']['latitude'],
                                                     x['location']['longitude']),
                                                     axis=1)
+
+# Keep for now and get buffer to work with current data.
+# https://gis.stackexchange.com/questions/344983/line-and-polygon-intersection-in-geopandas-python
 
 # Next step: determine how to dedupe cta_df on map_id (count California blue
 # line as one stop). For the most part, map_id will work, but there are some
