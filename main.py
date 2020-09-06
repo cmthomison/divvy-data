@@ -10,6 +10,7 @@ import numpy as np
 import geopandas as gpd
 from shapely.geometry import Point, LineString
 from geopy.distance import geodesic
+import matplotlib.pyplot as plt
 
 from sodapy import Socrata
 from prep import wrangle as wr
@@ -41,7 +42,7 @@ results_df['from_loc'] = results_df.apply(lambda x: wr.lat_long(x['from_latitude
 
 results_df['to_loc'] = results_df.apply(lambda x: wr.lat_long(x['to_latitude'],
                                                               x['to_longitude']),
-                                                              xis=1)
+                                                              axis=1)
 
 results_df['dist_mi'] = results_df.apply(lambda x: wr.get_mi(x['from_loc'],
                                                              x['to_loc']),
@@ -72,6 +73,11 @@ stations_geo = gpd.GeoDataFrame(stations,
 
 # NAD83 Illinois East
 stations_geo = stations_geo.set_crs("EPSG:26971")
+
+# Create buffers around Divvy stations (800 meters, about a half mile)
+stations_buff = stations_geo.buffer(800)
+stations_buff = gpd.GeoDataFrame(stations_geo, geometry=stations_buff)
+stations_buff.plot()
 
 # Keep for now and get buffer to work with current data.
 # https://gis.stackexchange.com/questions/344983/line-and-polygon-intersection-in-geopandas-python

@@ -16,6 +16,7 @@ sodapy = "*"
 geopandas = "*"
 pandas = "*"
 geopy = "*"
+descartes = "*"
 
 [requires]
 python_version = "3.7"
