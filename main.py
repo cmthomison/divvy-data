@@ -62,6 +62,17 @@ cta_geo = gpd.GeoDataFrame(cta_df,
                            geometry=gpd.points_from_xy(cta_coords['longitude'],
                                                        cta_coords['latitude']))
 
+# NAD83 Illinois East
+cta_geo = cta_geo.set_crs("EPSG:26971")
+
+# Convert stations to a geodataframe.
+stations_geo = gpd.GeoDataFrame(stations,
+                                geometry=gpd.points_from_xy(stations['longitude'],
+                                                            stations['latitude']))
+
+# NAD83 Illinois East
+stations_geo = stations_geo.set_crs("EPSG:26971")
+
 # Keep for now and get buffer to work with current data.
 # https://gis.stackexchange.com/questions/344983/line-and-polygon-intersection-in-geopandas-python
 
