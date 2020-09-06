@@ -56,6 +56,12 @@ cta_df['sloc'] = cta_df.apply(lambda x: wr.lat_long(x['location']['latitude'],
                                                     x['location']['longitude']),
                                                     axis=1)
 
+# Convert cta_df to a geodataframe.
+cta_coords = pd.DataFrame([x for x in cta_df['location']])
+cta_geo = gpd.GeoDataFrame(cta_df,
+                           geometry=gpd.points_from_xy(cta_coords['longitude'],
+                                                       cta_coords['latitude']))
+
 # Keep for now and get buffer to work with current data.
 # https://gis.stackexchange.com/questions/344983/line-and-polygon-intersection-in-geopandas-python
 
