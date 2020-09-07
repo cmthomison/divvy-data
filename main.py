@@ -80,12 +80,8 @@ stations_geo = stations_geo.to_crs("EPSG:26971")
 stations_buff = stations_geo.copy(deep=True)
 stations_buff['geometry'] = stations_buff.geometry.buffer(800)
 
-# Keep for now and get buffer to work with current data.
-# https://gis.stackexchange.com/questions/344983/line-and-polygon-intersection-in-geopandas-python
-
-# Next step: determine how to dedupe cta_df on map_id (count California blue
-# line as one stop). For the most part, map_id will work, but there are some
-# special cases.
+# Count CTA stations within Divvy station buffer.
+join = gpd.sjoin(stations_buff, cta_geo, how='left', op='contains')
 
 # Projection for Chicago
 #.to_crs(epsg=3435)
