@@ -17,6 +17,7 @@ geopandas = "*"
 pandas = "*"
 geopy = "*"
 descartes = "*"
+geoplot = "*"
 
 [requires]
 python_version = "3.7"

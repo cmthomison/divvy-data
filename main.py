@@ -64,7 +64,8 @@ cta_geo = gpd.GeoDataFrame(cta_df,
                                                        cta_coords['latitude']))
 
 # NAD83 Illinois East
-cta_geo = cta_geo.set_crs("EPSG:26971")
+cta_geo = cta_geo.set_crs("EPSG:4326")
+cta_geo = cta_geo.to_crs("EPSG:26971")
 
 # Convert stations to a geodataframe.
 stations_geo = gpd.GeoDataFrame(stations,
@@ -72,12 +73,12 @@ stations_geo = gpd.GeoDataFrame(stations,
                                                             stations['latitude']))
 
 # NAD83 Illinois East
-stations_geo = stations_geo.set_crs("EPSG:26971")
+stations_geo = stations_geo.set_crs("EPSG:4326")
+stations_geo = stations_geo.to_crs("EPSG:26971")
 
 # Create buffers around Divvy stations (800 meters, about a half mile)
-stations_buff = stations_geo.buffer(800)
-stations_buff = gpd.GeoDataFrame(stations_geo, geometry=stations_buff)
-stations_buff.plot()
+stations_buff = stations_geo.copy(deep=True)
+stations_buff['geometry'] = stations_buff.geometry.buffer(800)
 
 # Keep for now and get buffer to work with current data.
 # https://gis.stackexchange.com/questions/344983/line-and-polygon-intersection-in-geopandas-python
