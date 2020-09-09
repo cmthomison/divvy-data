@@ -67,6 +67,10 @@ cta_geo = gpd.GeoDataFrame(cta_df,
 cta_geo = cta_geo.set_crs("EPSG:4326")
 cta_geo = cta_geo.to_crs("EPSG:26971")
 
+# Update CTA field names
+cols = ['cta_' + x if x != 'geometry' else x for x in cta_geo.columns.tolist()]
+cta_geo.columns = cols
+
 # Convert stations to a geodataframe.
 stations_geo = gpd.GeoDataFrame(stations,
                                 geometry=gpd.points_from_xy(stations['longitude'],
@@ -82,6 +86,7 @@ stations_buff['geometry'] = stations_buff.geometry.buffer(800)
 
 # Count CTA stations within Divvy station buffer.
 join = gpd.sjoin(stations_buff, cta_geo, how='left', op='contains')
+cta_count = join.groupby(['station_id', 'station_name'])['cta_stop_id'].count().reset_index()
 
 # Projection for Chicago
 #.to_crs(epsg=3435)
