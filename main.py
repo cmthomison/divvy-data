@@ -88,6 +88,22 @@ stations_buff['geometry'] = stations_buff.geometry.buffer(800)
 join = gpd.sjoin(stations_buff, cta_geo, how='left', op='contains')
 cta_count = join.groupby(['station_id', 'station_name'])['cta_stop_id'].count().reset_index()
 
+# Take a quick look at distribution of CTA stops- most stations just have a 
+# few.
+cta_count['cta_stop_id'].hist()
+
+# Get share of subscriber/customer (% subscriber) rides.
+grp = ['from_station_id','user_type']
+sub_share = results_df.groupby(grp)['trip_id'].count().reset_index()
+sub_share = pd.pivot_table(sub_share, columns='user_type', values='trip_id',
+                           index='from_station_id', aggfunc='sum').reset_index()
+
+fill = ['Customer', 'Subscriber']
+sub_share[fill] = sub_share[fill].fillna(0)
+
+# Calculate sub_share.
+
+
 # Projection for Chicago
 #.to_crs(epsg=3435)
 #4326 is WGS84
