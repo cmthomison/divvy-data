@@ -102,7 +102,16 @@ fill = ['Customer', 'Subscriber']
 sub_share[fill] = sub_share[fill].fillna(0)
 
 # Calculate sub_share.
+def sub_calc(cust, sub):
+    total = cust + sub
+    
+    if total == 0:
+        return np.nan
+    else:
+        return sub / total
 
+s_func = lambda x: sub_calc(x['Customer'], x['Subscriber'])
+sub_share['sub_share'] = sub_share.apply(s_func, axis=1)
 
 # Projection for Chicago
 #.to_crs(epsg=3435)
