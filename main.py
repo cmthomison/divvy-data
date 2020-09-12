@@ -11,6 +11,7 @@ import geopandas as gpd
 from shapely.geometry import Point, LineString
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
+import datetime as dt
 
 from sodapy import Socrata
 from prep import wrangle as wr
@@ -21,7 +22,7 @@ client = Socrata("data.cityofchicago.org", None)
 client.timeout = 120
 
 # Get bikeshare records with sodapy.
-results = client.get("fg6s-gzvg", limit=1000)
+results = client.get("fg6s-gzvg", limit=20000)
 
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)
@@ -112,6 +113,19 @@ def sub_calc(cust, sub):
 
 s_func = lambda x: sub_calc(x['Customer'], x['Subscriber'])
 sub_share['sub_share'] = sub_share.apply(s_func, axis=1)
+
+# Get total trips by day of week.
+results_df['start_time'] = pd.to_datetime(results_df['start_time'])
+results_df['DOW'] = results_df['start_time'].dt.strftime('%A')
+
+dow = results_df.groupby(['from_station_id', 'DOW'])['trip_id'].count().reset_index()
+dow = pd.pivot_table(dow, index='from_station_id', columns='DOW', 
+                     values='trip_id', aggfunc='sum').reset_index()
+
+cols = ['from_' + x.lower() if x != 'from_station_id' else 'station_id' for x in dow.columns.tolist()]
+dow.columns = cols
+
+stations = pd.merge(stations, dow, how='left', on='station_id')
 
 # Projection for Chicago
 #.to_crs(epsg=3435)
