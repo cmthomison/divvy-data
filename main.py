@@ -137,7 +137,14 @@ wkd_in_data = [x for x in weekend if x in stations.columns.tolist()]
 
 stations['from_weekday'] = stations[wk_in_data].sum(axis=1)
 stations['from_weekend'] = stations[wkd_in_data].sum(axis=1)
+stations['from_total'] = stations[wk_in_data + wkd_in_data].sum(axis=1)
 
+# Percentage weekday rides.
+stations['wk_share'] = stations['from_weekday']/stations['from_total']
+
+# Merge cta_count to the stations dataframe.
+stations = pd.merge(stations, cta_count[['station_id', 'cta_stop_id']],
+                    how='left', on='station_id')
 
 # Projection for Chicago
 #.to_crs(epsg=3435)
