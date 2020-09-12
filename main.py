@@ -146,6 +146,26 @@ stations['wk_share'] = stations['from_weekday']/stations['from_total']
 stations = pd.merge(stations, cta_count[['station_id', 'cta_stop_id']],
                     how='left', on='station_id')
 
-# Projection for Chicago
-#.to_crs(epsg=3435)
-#4326 is WGS84
+# Get commute counts and percentages.
+# Trips that start witihn these time periods on week days.
+# All else will be 'other'.
+# Morning commute: 7-9 AM
+# Evening commute: 4:30-6:30
+def commute_flag(trip_start):
+    # Get time (not date)
+    trip_time = trip_start.time()
+    m_start = dt.time(7,0)
+    m_end = dt.time(9,0)
+    e_start = dt.time(16,30)
+    e_end = dt.time(18,30)
+
+    if m_start <= trip_time <= m_end:
+        return 'Morning Commute'
+    elif e_start <= trip_time <= e_end:
+        return 'Evening Commute'
+    elif trip_start.weekday() >= 5:
+        return 'Weekend'
+    else:
+        return 'Other Week Day'
+
+results_df['commute_flag'] = results_df['start_time'].apply(commute_flag)
