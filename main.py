@@ -127,6 +127,18 @@ dow.columns = cols
 
 stations = pd.merge(stations, dow, how='left', on='station_id')
 
+# Calculate weekday vs weekend rides.
+week = ['from_monday', 'from_tuesday', 'from_wednesday', 'from_thursday',
+        'from_friday']
+weekend = ['from_saturday', 'from_sunday']
+
+wk_in_data = [x for x in week if x in stations.columns.tolist()]
+wkd_in_data = [x for x in weekend if x in stations.columns.tolist()]
+
+stations['from_weekday'] = stations[wk_in_data].sum(axis=1)
+stations['from_weekend'] = stations[wkd_in_data].sum(axis=1)
+
+
 # Projection for Chicago
 #.to_crs(epsg=3435)
 #4326 is WGS84
