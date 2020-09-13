@@ -177,3 +177,14 @@ commute_pvt = pd.pivot_table(commute, index='from_station_id',
                              columns='commute_flag', values='trip_id',
                              aggfunc='sum').reset_index()
 commute_pvt.fillna(0, inplace=True)
+
+# Join to stations dataframe.
+commute_pvt.rename(columns={'from_station_id':'station_id'}, inplace=True)
+
+join_cols = ['station_id', 'Evening Commute', 'Morning Commute']
+stations = pd.merge(stations, commute_pvt[join_cols], how='left', 
+                    on='station_id')
+
+# Calculate from evening and morning commute share.
+stations['from_evening_comm'] = stations['Evening Commute']/stations['from_total']
+stations['from_morning_comm'] = stations['Morning Commute']/stations['from_total']
