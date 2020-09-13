@@ -169,3 +169,11 @@ def commute_flag(trip_start):
         return 'Other Week Day'
 
 results_df['commute_flag'] = results_df['start_time'].apply(commute_flag)
+
+# Groupby to get counts of evening/morning commute.
+grp = ['from_station_id', 'commute_flag']
+commute = results_df.groupby(grp)['trip_id'].count().reset_index()
+commute_pvt = pd.pivot_table(commute, index='from_station_id', 
+                             columns='commute_flag', values='trip_id',
+                             aggfunc='sum').reset_index()
+commute_pvt.fillna(0, inplace=True)
