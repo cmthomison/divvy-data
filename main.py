@@ -138,21 +138,22 @@ for dir in types:
     cols = [f'{dir}_' + x.lower() if 'station_id' not in x else 'station_id' for x in dow.columns.tolist()]
     dow.columns = cols
 
+    # Merge DOW dataframe to stations dataframe.
     stations = pd.merge(stations, dow, how='left', on='station_id')
 
     # Calculate weekday vs weekend rides.
     week = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
     weekend = ['saturday', 'sunday']
 
-    wk_in_data = [x for x in week if x in stations.columns.tolist()]
-    wkd_in_data = [x for x in weekend if x in stations.columns.tolist()]
+    wk_in_data = [f'{dir}_{x}' for x in week if f'{dir}_{x}' in stations.columns.tolist()]
+    wkd_in_data = [f'{dir}_{x}' for x in weekend if f'{dir}_{x}' in stations.columns.tolist()]
 
-    stations['from_weekday'] = stations[wk_in_data].sum(axis=1)
-    stations['from_weekend'] = stations[wkd_in_data].sum(axis=1)
-    stations['from_total'] = stations[wk_in_data + wkd_in_data].sum(axis=1)
+    stations[f'{dir}_weekday'] = stations[wk_in_data].sum(axis=1)
+    stations[f'{dir}_weekend'] = stations[wkd_in_data].sum(axis=1)
+    stations[f'{dir}_total'] = stations[wk_in_data + wkd_in_data].sum(axis=1)
 
     # Percentage weekday rides.
-    stations['wk_share'] = stations['from_weekday']/stations['from_total']
+    stations[f'{dir}_wk_share'] = stations['from_weekday']/stations['from_total']
 
 
 # Merge cta_count to the stations dataframe.
