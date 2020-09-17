@@ -101,27 +101,6 @@ cta_count = join.groupby(grp)['cta_stop_id'].count().reset_index()
 # few.
 cta_count['cta_stop_id'].hist()
 
-# Get share of subscriber/customer (% subscriber) rides.
-grp = ['from_station_id','user_type']
-sub_share = results_df.groupby(grp)['trip_id'].count().reset_index()
-sub_share = pd.pivot_table(sub_share, columns='user_type', values='trip_id',
-                           index='from_station_id', aggfunc='sum').reset_index()
-
-fill = ['Customer', 'Subscriber']
-sub_share[fill] = sub_share[fill].fillna(0)
-
-# Calculate sub_share.
-def sub_calc(cust, sub):
-    total = cust + sub
-    
-    if total == 0:
-        return np.nan
-    else:
-        return sub / total
-
-s_func = lambda x: sub_calc(x['Customer'], x['Subscriber'])
-sub_share['sub_share'] = sub_share.apply(s_func, axis=1)
-
 # Get total trips by day of week.
 results_df['start_time'] = pd.to_datetime(results_df['start_time'])
 results_df['DOW'] = results_df['start_time'].dt.strftime('%A')
@@ -149,6 +128,25 @@ stations['from_total'] = stations[wk_in_data + wkd_in_data].sum(axis=1)
 
 # Percentage weekday rides.
 stations['wk_share'] = stations['from_weekday']/stations['from_total']
+
+# Calculate station stats for both departure (from) and arrival (to) trips.
+types = ['from', 'to']
+
+for dir in types:
+
+    # Get share of subscriber/customer (% subscriber) rides.
+    grp = [f'{dir}_station_id','user_type']
+    sub_share = results_df.groupby(grp)['trip_id'].count().reset_index()
+    sub_share = pd.pivot_table(sub_share, columns='user_type', values='trip_id',
+                            index=f'{dir}_station_id', aggfunc='sum').reset_index()
+
+    fill = ['Customer', 'Subscriber']
+    sub_share[fill] = sub_share[fill].fillna(0)
+    s_func = lambda x: sub_calc(x['Customer'], x['Subscriber'])
+    sub_share[f'{dir}_sub_share'] = sub_share.apply(s_func, axis=1)
+
+
+
 
 # Merge cta_count to the stations dataframe.
 stations = pd.merge(stations, cta_count[['station_id', 'cta_stop_id']],

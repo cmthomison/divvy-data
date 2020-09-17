@@ -27,3 +27,12 @@ def get_mi(from_loc:tuple, to_loc:tuple) -> float:
     dist = geodesic(from_loc, to_loc).miles
 
     return dist
+
+# Calculate sub_share.
+def sub_calc(cust, sub):
+    total = cust + sub
+    
+    if total == 0:
+        return np.nan
+    else:
+        return sub / total
