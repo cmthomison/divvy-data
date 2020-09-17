@@ -1,5 +1,7 @@
 """
 Divvy Data Analysis
+This script pulls and preps data.
+
 @cmthomison
 8/25/2020
 """
@@ -92,7 +94,8 @@ stations_buff['geometry'] = stations_buff.geometry.buffer(800)
 
 # Count CTA stations within Divvy station buffer.
 join = gpd.sjoin(stations_buff, cta_geo, how='left', op='contains')
-cta_count = join.groupby(['station_id', 'station_name'])['cta_stop_id'].count().reset_index()
+grp = ['station_id', 'station_name']
+cta_count = join.groupby(grp)['cta_stop_id'].count().reset_index()
 
 # Take a quick look at distribution of CTA stops- most stations just have a 
 # few.
