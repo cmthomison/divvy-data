@@ -101,36 +101,12 @@ cta_count = join.groupby(grp)['cta_stop_id'].count().reset_index()
 # few.
 cta_count['cta_stop_id'].hist()
 
-# Get total trips by day of week.
+# Manage datetimes.
 results_df['start_time'] = pd.to_datetime(results_df['start_time'])
-results_df['DOW'] = results_df['start_time'].dt.strftime('%A')
-
-dow = results_df.groupby(['from_station_id', 'DOW'])['trip_id'].count().reset_index()
-dow = pd.pivot_table(dow, index='from_station_id', columns='DOW', 
-                     values='trip_id', aggfunc='sum').reset_index()
-
-cols = ['from_' + x.lower() if x != 'from_station_id' else 'station_id' for x in dow.columns.tolist()]
-dow.columns = cols
-
-stations = pd.merge(stations, dow, how='left', on='station_id')
-
-# Calculate weekday vs weekend rides.
-week = ['from_monday', 'from_tuesday', 'from_wednesday', 'from_thursday',
-        'from_friday']
-weekend = ['from_saturday', 'from_sunday']
-
-wk_in_data = [x for x in week if x in stations.columns.tolist()]
-wkd_in_data = [x for x in weekend if x in stations.columns.tolist()]
-
-stations['from_weekday'] = stations[wk_in_data].sum(axis=1)
-stations['from_weekend'] = stations[wkd_in_data].sum(axis=1)
-stations['from_total'] = stations[wk_in_data + wkd_in_data].sum(axis=1)
-
-# Percentage weekday rides.
-stations['wk_share'] = stations['from_weekday']/stations['from_total']
+results_df['stop_time'] = pd.to_datetime(results_df['stop_time'])
 
 # Calculate station stats for both departure (from) and arrival (to) trips.
-types = ['from', 'to']
+types = {'from':{'time': 'start'}, 'to':{'time':'stop'}}
 
 for dir in types:
 
@@ -142,10 +118,41 @@ for dir in types:
 
     fill = ['Customer', 'Subscriber']
     sub_share[fill] = sub_share[fill].fillna(0)
-    s_func = lambda x: sub_calc(x['Customer'], x['Subscriber'])
+    s_func = lambda x: wr.sub_calc(x['Customer'], x['Subscriber'])
     sub_share[f'{dir}_sub_share'] = sub_share.apply(s_func, axis=1)
+    new_cols ={x: f'{dir}_{x.lower()}' for x in fill}
+    new_cols.update({f'{dir}_station_id':'station_id'})
+    sub_share.rename(columns=new_cols, inplace=True)
 
+    # Join sub_share dataframe to stations dataframe.
+    stations = pd.merge(stations, sub_share, how='left', on='station_id')
 
+    # Get total trips by day of week.
+    tm_fld = types[dir]['time']
+    results_df['DOW'] = results_df[f'{tm_fld}_time'].dt.strftime('%A')
+
+    dow = results_df.groupby([f'{dir}_station_id', 'DOW'])['trip_id'].count().reset_index()
+    dow = pd.pivot_table(dow, index=f'{dir}_station_id', columns='DOW', 
+                        values='trip_id', aggfunc='sum').reset_index()
+
+    cols = [f'{dir}_' + x.lower() if 'station_id' not in x else 'station_id' for x in dow.columns.tolist()]
+    dow.columns = cols
+
+    stations = pd.merge(stations, dow, how='left', on='station_id')
+
+    # Calculate weekday vs weekend rides.
+    week = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+    weekend = ['saturday', 'sunday']
+
+    wk_in_data = [x for x in week if x in stations.columns.tolist()]
+    wkd_in_data = [x for x in weekend if x in stations.columns.tolist()]
+
+    stations['from_weekday'] = stations[wk_in_data].sum(axis=1)
+    stations['from_weekend'] = stations[wkd_in_data].sum(axis=1)
+    stations['from_total'] = stations[wk_in_data + wkd_in_data].sum(axis=1)
+
+    # Percentage weekday rides.
+    stations['wk_share'] = stations['from_weekday']/stations['from_total']
 
 
 # Merge cta_count to the stations dataframe.
