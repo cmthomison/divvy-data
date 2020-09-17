@@ -36,6 +36,11 @@ cols = stations.columns.tolist()
 stations.columns = [x.split('_',1)[1] for x in cols]
 
 # Data wrangling/preliminary feature engineering.
+
+# Drop null to/from locations.
+locs = ['from_latitude', 'from_longitude', 'to_latitude', 'to_longitude']
+results_df.dropna(subset=locs, inplace=True)
+
 # Calculate distance (in miles) between start and end stations.
 results_df['from_loc'] = results_df.apply(lambda x: wr.lat_long(x['from_latitude'],
                                                                 x['from_longitude']),
@@ -188,3 +193,7 @@ stations = pd.merge(stations, commute_pvt[join_cols], how='left',
 # Calculate from evening and morning commute share.
 stations['from_evening_comm'] = stations['Evening Commute']/stations['from_total']
 stations['from_morning_comm'] = stations['Morning Commute']/stations['from_total']
+
+# Start gathering feature list.
+feat = ['from_total', 'wk_share', 'cta_stop_id', 'from_evening_comm',
+        'from_morning_comm']
