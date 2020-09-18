@@ -42,4 +42,5 @@
     - Write a function to create a line with to/from with shapely and return line length
     - https://www.youtube.com/watch?v=FizD8t5_s3M&feature=emb_rel_pause
 - Pull in CTA train and bus station data (with lat/long)
-- Count number of bus/train stops within 
+- Count number of bus/train stops within radius
+- After data wrangling is complete, set up local sqlite database to store clean data.
