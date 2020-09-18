@@ -186,7 +186,6 @@ for dir in types:
 # Merge cta_count to the stations dataframe.
 stations = pd.merge(stations, cta_count[['station_id', 'cta_stop_id']],
                     how='left', on='station_id')
+stations.rename(columns={'cta_stop_id':'cta_stop_count'}, inplace=True)
 
-# Start gathering feature list.
-feat = ['from_total', 'wk_share', 'cta_stop_id', 'from_evening_comm',
-        'from_morning_comm']
+# Export resulting data to sqlite database.
