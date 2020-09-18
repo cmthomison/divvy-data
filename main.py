@@ -153,10 +153,10 @@ for dir in types:
     stations[f'{dir}_total'] = stations[wk_in_data + wkd_in_data].sum(axis=1)
 
     # Percentage weekday rides.
-    stations[f'{dir}_wk_share'] = stations['from_weekday']/stations['from_total']
+    stations[f'{dir}_wk_share'] = stations[f'{dir}_weekday']/stations[f'{dir}_total']
 
     # Get commute counts and percentages.
-    results_df[f'{dir}_commute_flag'] = results_df[tm_fld].apply(commute_flag)
+    results_df[f'{dir}_commute_flag'] = results_df[f'{tm_fld}_time'].apply(wr.commute_flag)
 
     # Groupby to get counts of evening/morning commute.
     grp = [f'{dir}_station_id', f'{dir}_commute_flag']
