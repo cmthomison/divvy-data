@@ -155,53 +155,37 @@ for dir in types:
     # Percentage weekday rides.
     stations[f'{dir}_wk_share'] = stations['from_weekday']/stations['from_total']
 
+    # Get commute counts and percentages.
+    results_df[f'{dir}_commute_flag'] = results_df[tm_fld].apply(commute_flag)
+
+    # Groupby to get counts of evening/morning commute.
+    grp = [f'{dir}_station_id', f'{dir}_commute_flag']
+    commute = results_df.groupby(grp)['trip_id'].count().reset_index()
+    commute_pvt = pd.pivot_table(commute, index=f'{dir}_station_id', 
+                                 columns=f'{dir}_commute_flag', values='trip_id',
+                                 aggfunc='sum').reset_index()
+    commute_pvt.fillna(0, inplace=True)
+
+    # Manage pivot columns.
+    new_cols = {f'{dir}_station_id':'station_id',
+                'Evening Commute':f'{dir}_evening_commute',
+                'Morning Commute':f'{dir}_morning_commute'}
+
+    commute_pvt.rename(columns=new_cols, inplace=True)
+            
+    # Join to stations dataframe.
+    join_cols = ['station_id', f'{dir}_evening_commute',
+                 f'{dir}_morning_commute']
+    stations = pd.merge(stations, commute_pvt[join_cols], how='left', 
+                        on='station_id')
+    
+    # Calculate from evening and morning commute share.
+    stations[f'{dir}_evening_comm'] = stations[f'{dir}_evening_commute']/stations[f'{dir}_total']
+    stations[f'{dir}_morning_comm'] = stations[f'{dir}_morning_commute']/stations[f'{dir}_total']
 
 # Merge cta_count to the stations dataframe.
 stations = pd.merge(stations, cta_count[['station_id', 'cta_stop_id']],
                     how='left', on='station_id')
-
-# Get commute counts and percentages.
-# Trips that start witihn these time periods on week days.
-# All else will be 'other'.
-# Morning commute: 7-9 AM
-# Evening commute: 4:30-6:30
-def commute_flag(trip_start):
-    # Get time (not date)
-    trip_time = trip_start.time()
-    m_start = dt.time(7,0)
-    m_end = dt.time(9,0)
-    e_start = dt.time(16,30)
-    e_end = dt.time(18,30)
-
-    if m_start <= trip_time <= m_end:
-        return 'Morning Commute'
-    elif e_start <= trip_time <= e_end:
-        return 'Evening Commute'
-    elif trip_start.weekday() >= 5:
-        return 'Weekend'
-    else:
-        return 'Other Week Day'
-
-results_df['commute_flag'] = results_df['start_time'].apply(commute_flag)
-
-# Groupby to get counts of evening/morning commute.
-grp = ['from_station_id', 'commute_flag']
-commute = results_df.groupby(grp)['trip_id'].count().reset_index()
-commute_pvt = pd.pivot_table(commute, index='from_station_id', 
-                             columns='commute_flag', values='trip_id',
-                             aggfunc='sum').reset_index()
-commute_pvt.fillna(0, inplace=True)
-
-# Join to stations dataframe.
-commute_pvt.rename(columns={'from_station_id':'station_id'}, inplace=True)
-
-join_cols = ['station_id', 'Evening Commute', 'Morning Commute']
-stations = pd.merge(stations, commute_pvt[join_cols], how='left', 
-                    on='station_id')
-
-# Calculate from evening and morning commute share.
-stations['from_evening_comm'] = stations['Evening Commute']/stations['from_total']
-stations['from_morning_comm'] = stations['Morning Commute']/stations['from_total']
 
 # Start gathering feature list.
 feat = ['from_total', 'wk_share', 'cta_stop_id', 'from_evening_comm',
