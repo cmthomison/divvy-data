@@ -14,6 +14,8 @@ from shapely.geometry import Point, LineString
 from geopy.distance import geodesic
 import matplotlib.pyplot as plt
 import datetime as dt
+import sqlite3
+from sqlite3 import Error
 
 from sodapy import Socrata
 from prep import wrangle as wr
@@ -189,3 +191,17 @@ stations = pd.merge(stations, cta_count[['station_id', 'cta_stop_id']],
 stations.rename(columns={'cta_stop_id':'cta_stop_count'}, inplace=True)
 
 # Export resulting data to sqlite database.
+def create_connection(db_file):
+    """ create a database connection to a SQLite database """
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+        print(sqlite3.version)
+    except Error as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
+
+if __name__ == '__main__':
+    create_connection(r'/home/clairethomison/Documents/projects/divvy-data/data/divvy.db')
