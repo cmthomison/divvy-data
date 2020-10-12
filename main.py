@@ -202,6 +202,29 @@ def create_connection(db_file):
     finally:
         if conn:
             conn.close()
+    
+    return conn
 
 if __name__ == '__main__':
-    create_connection(r'/home/clairethomison/Documents/projects/divvy-data/data/divvy.db')
+    conn = create_connection(r'/home/clairethomison/Documents/projects/divvy-data/data/divvy.db')
+
+# From: https://www.sqlitetutorial.net/sqlite-python/create-tables/
+def create_table(conn, create_table_sql):
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
+# SQL to create table.
+sql_create_stations = """ CREATE TABLE IF NOT EXISTS stations (
+                                id integer PRIMARY KEY,
+                                name text NOT NULL,
+                                begin_date text,
+                                end_date text
+                            ); """
