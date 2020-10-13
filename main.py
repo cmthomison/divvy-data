@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import datetime as dt
 import sqlite3
 from sqlite3 import Error
+from sqlalchemy import create_engine
 
 from sodapy import Socrata
 from prep import wrangle as wr
@@ -228,3 +229,14 @@ sql_create_stations = """ CREATE TABLE IF NOT EXISTS stations (
                                 begin_date text,
                                 end_date text
                             ); """
+
+# Starting point 10/13/20: https://www.fullstackpython.com/blog/export-pandas-dataframes-sqlite-sqlalchemy.html
+db_path = r'/home/clairethomison/Documents/projects/divvy-data/data/divvy.db'
+engine = create_engine(f'sqlite:///{db_path}', echo=True)
+sqlite_connection = 
+
+# Create table.
+sqlite_table = 'stations'
+stations.to_sql(sqlite_table, sqlite_connection, if_exists='fail')
+
+# START HERE TOMORROW: https://stackoverflow.com/questions/38332787/pandas-to-sql-to-sqlite-returns-engine-object-has-no-attribute-cursor

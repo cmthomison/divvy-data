@@ -18,6 +18,7 @@ pandas = "*"
 geopy = "*"
 descartes = "*"
 geoplot = "*"
+sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"
